@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>मौसम ऐप</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #87cefa, #f0f8ff);
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #007BFF;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            min-width: 250px;
+        }
+    </style>
+</head>
+<body>
+<h2>🌤 मौसम देखने का ऐप</h2>
+<input type="text" id="cityInput" placeholder="शहर का नाम लिखें">
+<button onclick="getWeather()">खोजें</button>
+
+<div id="result"></div>
+
+<script>
+    const apiKey = "e2e1a616fcba7e80bf9913862f88a52e"; // ← यहाँ अपनी API Key डालो
+
+    async function getWeather() {
+        const city = document.getElementById("cityInput").value;
+        if (city === "") {
+            alert("कृपया शहर का नाम डालें");
+            return;
+        }
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=hi&appid=${apiKey}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.cod === "404") {
+                document.getElementById("result").innerHTML = `<p>शहर नहीं मिला ❌</p>`;
+                return;
+            }
+
+            document.getElementById("result").innerHTML = `
+                <h3>${data.name}, ${data.sys.country}</h3>
+                <p>🌡 तापमान: ${data.main.temp}°C</p>
+                <p>🌥 मौसम: ${data.weather[0].description}</p>
+                <p>💨 हवा की रफ्तार: ${data.wind.speed} m/s</p>
+            `;
+        } catch (error) {
+            console.log(error);
+            alert("कुछ गड़बड़ हो गई!");
+        }
+    }
+</script>
+</body>
+</html>
